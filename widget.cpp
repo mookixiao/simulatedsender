@@ -14,10 +14,11 @@ Widget::Widget(QWidget *parent) :
 
     // 界面
     ui->fileLineEdit->setReadOnly(true);
-    ui->ipLineEdit->setText("192.168.1.102");
+    ui->ipLineEdit->setText("192.168.100.170");
     ui->portLineEdit->setText("10001");
-    ui->sizeLineEdit->setText("10240");
-    ui->intervalLineEdit->setText("20");
+    ui->intervalLineEdit->setText("5");
+    ui->sizeLineEdit->setText("1280");
+    ui->autoRestartCheckBox->setChecked(true);
 
     // 信号与槽
     connect(ui->selectBtn, &QPushButton::clicked, this, &Widget::selectBtn_clicked);
@@ -34,8 +35,15 @@ Widget::~Widget()
 void Widget::timeToSend()
 {
     QByteArray buffer = file.read(maxSize);
-    if (buffer.isEmpty()) {
-        timer.stop();
+    if (buffer.isEmpty()) {  // 到达文件末尾
+        if (ui->autoRestartCheckBox->isChecked()) {
+            file.seek(0);
+            buffer = file.read(maxSize);
+        }
+        else {
+            timer.stop();
+            return;
+        }
     }
 
     socket.writeDatagram(buffer, ip, port);
