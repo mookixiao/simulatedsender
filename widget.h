@@ -20,26 +20,30 @@ public:
     ~Widget();
 
 private:
+    void updateProcessStatus();
+
     Ui::Widget *ui;
 
     // 通信
-    QUdpSocket socket;
+    QUdpSocket m_udpSocket;
     QHostAddress ip;
     quint16 port;
 
-    QFile file;
+    QFile m_file;
     qint64 maxSize;
     qint64 sended;
 
     // 定时器
-    QTimer timer;
+    QTimer m_timer;
 
-
-private slots:
+public slots:
     void timeToSend();
 
+    void processSlider_valueChanged();
+    void processLineEdit_editingFinished();
+
     void selectBtn_clicked();
-    void sendBtn_clicked();
+    void startBtn_clicked();
     void stopBtn_clicked();
 };
 
